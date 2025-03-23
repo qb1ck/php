@@ -48,7 +48,8 @@ class UserService
 
             foreach ($users as $user) {
                 if ($user['email'] == $email) {
-                    die("Ошибка: пользователь с таким email уже существует.\n");
+                    echo "Ошибка: пользователь с таким email уже существует.\n";
+                    return;
                 }
             }
 
@@ -64,13 +65,14 @@ class UserService
             $users[] = $user;
             file_put_contents('./users.json', json_encode($users));
             unset($user['password']);
-            print_r($user);
-
+            // Убираем вывод всей информации о пользователе
+            return;
         } else {
             $connection = (new Database())->getConnection();
             $result = $connection->query("SELECT COUNT(*) FROM users WHERE email = '$email'");
             if ($result->fetchColumn() > 0) {
-                die("Ошибка: пользователь с таким email уже существует.\n");
+                echo "Ошибка: пользователь с таким email уже существует.\n";
+                return;
             }
             $connection->query("INSERT into users (name, email, password) values ('$name', '$email', '$password')");
         }
@@ -97,23 +99,26 @@ class UserService
             }
 
             if (!$deleted) {
-                die("Пользователь не найден.\n");
+                echo "Пользователь не найден.\n";
             } else {
-                die("Пользователь успешно удален.\n");
+                echo "Пользователь успешно удален.\n";
             }
         } else {
             $connection = (new Database())->getConnection();
             $tableExists = $connection->query("SHOW TABLES LIKE 'users'")->rowCount() > 0;
             if (!$tableExists) {
-                die("Таблица не существует.\n");
+                echo "Таблица не существует.\n";
+                return;
             }
 
             $result = $connection->query("SELECT COUNT(*) FROM users WHERE id = '$id'");
             if ($result->fetchColumn() == 0) {
-                die("Пользователь не найден.\n");
+                echo "Пользователь не найден.\n";
+                return;
             }
 
             $connection->query("DELETE FROM users WHERE id = '$id'");
+            echo "Пользователь успешно удален.\n";
         }
     }
 

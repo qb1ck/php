@@ -26,7 +26,8 @@ class UserController
         $password = $argv[3] ?? $_POST['password'];
 
         if (empty($name) || empty($email) || empty($password)) {
-            die("Ошибка: необходимо передать name, email и password\n");
+            echo("Ошибка: необходимо передать name, email и password\n");
+            return;
         }
 
         $service->createUser($name, $email, $password);
