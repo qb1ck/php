@@ -1,3 +1,4 @@
-./vendor
-./.env
-./.idea
+vendor
+.env
+.idea
+_docker/nginx/logs
