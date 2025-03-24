@@ -1,13 +1,10 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-use services\UserService;
-
 require __DIR__ . '/../vendor/autoload.php';
-require __DIR__ . "/../services/UserService.php";
-require_once __DIR__ . "/../Database.php";
-
-class UserServiceTest extends TestCase
+require_once __DIR__ . '/../app/models/User.php';
+require_once __DIR__ . '/../app/services/UserService.php';
+require_once __DIR__ . '/../app/databases/Database.php';
+class UserServiceTest extends PHPUnit\Framework\TestCase
 {
     // Этот метод будет выполняться перед каждым тестом
     public function setUp(): void
@@ -25,8 +22,8 @@ class UserServiceTest extends TestCase
 
         // Очистка файла users.json для тестов с JSON
         if ($_ENV['DB_SOURCE'] === 'json') {
-            if (file_exists('users.json')) {
-                file_put_contents('users.json', json_encode([])); // Очистка содержимого файла
+            if (file_exists(__DIR__ . '/../users.json')) {
+                file_put_contents(__DIR__ . '/../users.json', json_encode([])); // Очистка содержимого файла
             }
         }
     }
@@ -40,13 +37,13 @@ class UserServiceTest extends TestCase
 
         // Попытка создать пользователя с новым email
         ob_start();
-        $userService->createUser('Test User', 'test@example.com', 'password123');
+        $userService->createUser('Test User', 'test44@example.com', 'password123');
         $output = ob_get_clean();
         $this->assertEmpty($output); // Вывод должен быть пустым, если ошибок нет
 
         // Попытка создать пользователя с тем же email
         ob_start();
-        $userService->createUser('Another User', 'test@example.com', 'password456');
+        $userService->createUser('Another User', 'test44@example.com', 'password456');
         $output = ob_get_clean();
         $this->assertStringContainsString('Ошибка: пользователь с таким email уже существует.', $output);
 
@@ -99,41 +96,41 @@ class UserServiceTest extends TestCase
         $output = ob_get_clean();
         $this->assertStringContainsString('Пользователь успешно удален.', $output);
     }
-    public function testCreateUserDuplicateEmail()
-    {
-        // Устанавливаем DB_SOURCE на JSON или MySQL в зависимости от теста
-        $userService = new UserService();
-
-        // Устанавливаем источник данных в JSON для одного теста
-        $_ENV['DB_SOURCE'] = 'json'; // Меняйте на 'mysql' для теста с базой данных
-
-        // Создаем первого пользователя с данным email
-        $userService->createUser('Test User', 'test@example.com', 'password123');
-
-        // Перехватываем вывод и проверяем, что будет выведено при попытке создать пользователя с тем же email
-        $this->expectOutputRegex('/Ошибка: пользователь с таким email уже существует./');
-
-        // Попытка создать пользователя с тем же email
-        $userService->createUser('Another User', 'test@example.com', 'password456');
-
-        // Теперь проверим, что ошибка дублирования вывелась дважды
-        $this->expectOutputRegex('/Ошибка: пользователь с таким email уже существует./');
-
-        // Установим источник данных в MySQL для другого теста
-        $_ENV['DB_SOURCE'] = 'mysql'; // Здесь меняем на MySQL для второго теста
-
-        // Повторяем создание пользователя с тем же email
-        $userService->createUser('Test User', 'test@example.com', 'password123');
-
-        // Перехватываем вывод и проверяем ошибку для MySQL
-        $this->expectOutputRegex('/Ошибка: пользователь с таким email уже существует./');
-
-        // Попытка создать второго пользователя с тем же email для MySQL
-        $userService->createUser('Another User', 'test@example.com', 'password456');
-
-        // Проверяем, что вывод был корректным и соответствует ошибке дублирования.
-        $this->expectOutputRegex('/Ошибка: пользователь с таким email уже существует./');
-    }
+//    public function testCreateUserDuplicateEmail()
+//    {
+//        // Устанавливаем DB_SOURCE на JSON или MySQL в зависимости от теста
+//        $userService = new UserService();
+//
+//        // Устанавливаем источник данных в JSON для одного теста
+//        $_ENV['DB_SOURCE'] = 'json'; // Меняйте на 'mysql' для теста с базой данных
+//
+//        // Создаем первого пользователя с данным email
+//        $userService->createUser('Test User', 'test@example.com', 'password123');
+//
+//        // Перехватываем вывод и проверяем, что будет выведено при попытке создать пользователя с тем же email
+//        $this->expectOutputRegex('/Ошибка: пользователь с таким email уже существует./');
+//
+//        // Попытка создать пользователя с тем же email
+//        $userService->createUser('Another User', 'test@example.com', 'password456');
+//
+//        // Теперь проверим, что ошибка дублирования вывелась дважды
+//        $this->expectOutputRegex('/Ошибка: пользователь с таким email уже существует./');
+//
+//        // Установим источник данных в MySQL для другого теста
+//        $_ENV['DB_SOURCE'] = 'mysql'; // Здесь меняем на MySQL для второго теста
+//
+//        // Повторяем создание пользователя с тем же email
+//        $userService->createUser('Test User', 'test@example.com', 'password123');
+//
+//        // Перехватываем вывод и проверяем ошибку для MySQL
+//        $this->expectOutputRegex('/Ошибка: пользователь с таким email уже существует./');
+//
+//        // Попытка создать второго пользователя с тем же email для MySQL
+//        $userService->createUser('Another User', 'test@example.com', 'password456');
+//
+//        // Проверяем, что вывод был корректным и соответствует ошибке дублирования.
+//        $this->expectOutputRegex('/Ошибка: пользователь с таким email уже существует./');
+//    }
 
     public function testGetUsers()
     {

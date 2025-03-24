@@ -1,13 +1,15 @@
 <?php
-
-class Router {
+class Router
+{
     private array $routes = [];
 
-    public function add(string $method, string $path, callable|array $handler): void {
+    public function add(string $method, string $path, callable|array $handler): void
+    {
         $this->routes[] = compact('method', 'path', 'handler');
     }
 
-    public function dispatch(string $requestUri, string $requestMethod): void {
+    public function dispatch(string $requestUri, string $requestMethod): void
+    {
         foreach ($this->routes as $route) {
             $params = [];
             if ($route['method'] === strtoupper($requestMethod) && $this->match($route['path'], $requestUri, $params)) {
@@ -19,7 +21,8 @@ class Router {
         echo "404 Нет такой страницы";
     }
 
-    private function match(string $routePath, string $requestUri, array &$params): bool {
+    private function match(string $routePath, string $requestUri, array &$params): bool
+    {
         $routePattern = preg_replace('/\{([\w]+)\}/', '(?P<$1>[^/]+)', $routePath);
         $routePattern = '#^' . $routePattern . '$#';
 

@@ -1,19 +1,9 @@
 <?php
-
-namespace services;
-
-use Database;
-use Dotenv\Dotenv;
-use User;
-
-require_once __DIR__ . '/../Database.php';
-require_once __DIR__ . '/../User.php';
-
 class UserService
 {
     public function __construct()
     {
-        $dotenv = Dotenv::createMutable(__DIR__ . '/../');
+        $dotenv = \Dotenv\Dotenv::createMutable(__DIR__ . '/../../');
         $dotenv->load();
     }
 
@@ -26,7 +16,7 @@ class UserService
                 return file_get_contents('users.json');
             }
         } else {
-            $users = (new Database())->getConnection()->query('SELECT * FROM users');
+            $users = (new Database)->getConnection()->query('SELECT * FROM users');
             $returnUsers = [];
             foreach ($users->fetchAll() as $user) {
                 [$id, $name, $email, $password] = $user;
@@ -40,12 +30,11 @@ class UserService
     public function createUser($name, $email, $password)
     {
         if ($_ENV['DB_SOURCE'] == 'json') {
-            if (!file_exists('users.json')) {
-                file_put_contents('users.json', json_encode([]));
+            if (!file_exists(__DIR__ . '/../../users.json')) {
+                file_put_contents(__DIR__.'/../../users.json', json_encode([]));
             }
 
-            $users = json_decode(file_get_contents('users.json'), true);
-
+            $users = json_decode(file_get_contents(__DIR__ .'/../../users.json'), true);
             foreach ($users as $user) {
                 if ($user['email'] == $email) {
                     echo "Ошибка: пользователь с таким email уже существует.\n";
@@ -63,10 +52,9 @@ class UserService
 
             $user = ['id' => $id, 'name' => $name, 'email' => $email, 'password' => $password];
             $users[] = $user;
-            file_put_contents('./users.json', json_encode($users));
+            file_put_contents(__DIR__ .'/../../users.json', json_encode($users));
             unset($user['password']);
-            // Убираем вывод всей информации о пользователе
-            return;
+
         } else {
             $connection = (new Database())->getConnection();
             $result = $connection->query("SELECT COUNT(*) FROM users WHERE email = '$email'");

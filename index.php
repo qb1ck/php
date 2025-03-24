@@ -2,7 +2,7 @@
 
 require "services/UserService.php";
 
-use services\UserService;
+use app\services\UserService;
 
 $userService = new UserService();
 $users = $userService->getUsers();

@@ -1,11 +1,4 @@
 <?php
-
-namespace controllers;
-
-use services\UserService;
-
-require_once __DIR__ . '/../services/UserService.php';
-
 class UserController
 {
     public static function index(): void
@@ -21,9 +14,9 @@ class UserController
         $service = new UserService();
 
         global $argv;
-        $name = $argv[1] ?? $_POST['name'];
-        $email = $argv[2] ?? $_POST['email'];
-        $password = $argv[3] ?? $_POST['password'];
+        $name = $argv[2] ?? $_POST['name'];
+        $email = $argv[3] ?? $_POST['email'];
+        $password = $argv[4] ?? $_POST['password'];
 
         if (empty($name) || empty($email) || empty($password)) {
             echo("Ошибка: необходимо передать name, email и password\n");
