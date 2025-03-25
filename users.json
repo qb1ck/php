@@ -1,1 +1,20 @@
-{"1":{"id":2,"name":"Test User 2","email":"user2@example.com","password":"password456"},"2":{"id":3,"name":"Test User","email":"test44@example.com","password":"password123"},"3":{"id":4,"name":"User to Delete","email":"delete@example.com","password":"password123"},"4":{"id":5,"name":"Test User 1","email":"user1@example.com","password":"password123"}}
+[
+  {
+    "id": 1,
+    "name": "Test User 1",
+    "email": "user1@example.com",
+    "password": "password123"
+  },
+  {
+    "id": 2,
+    "name": "Test User 2",
+    "email": "user2@example.com",
+    "password": "password456"
+  },
+  {
+    "id": 3,
+    "name": "aksdakjsdjk",
+    "email": "k2alsjdals",
+    "password": "123qwsdqsa"
+  }
+]

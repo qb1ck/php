@@ -1,12 +1,17 @@
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../app/Router.php';
 require_once __DIR__ . '/../app/Console.php';
 require_once __DIR__ . '/../app/controllers/UserController.php';
 require_once __DIR__ . '/../app/models/User.php';
 require_once __DIR__ . '/../app/services/UserService.php';
 require_once __DIR__ . '/../app/databases/Database.php';
+require_once __DIR__ . '/../app/repositories/UserRepositoryFactory.php';
+require_once __DIR__ . '/../app/repositories/UserRepositoryInterface.php';
+require_once __DIR__ . '/../app/repositories/JsonUserRepository.php';
+require_once __DIR__ . '/../app/repositories/MysqlUserRepository.php';
+
 
 // Обработка CLI-команд
 if (php_sapi_name() === 'cli') {
