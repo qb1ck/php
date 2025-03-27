@@ -25,7 +25,7 @@ class UserService
         return $this->userRepository->getUsers();
     }
 
-    public function createUser($name, $email, $password): array
+    public function createUser(string $name, string  $email, string  $password): array
     {
         if (empty($name) || empty($email) || empty($password)) {
             return ['error' => 'Ошибка: необходимо передать name, email и password'];
@@ -33,7 +33,7 @@ class UserService
         return $this->userRepository->createUser($name, $email, $password);
     }
 
-    public function deleteUser($id): array
+    public function deleteUser(int $id): array
     {
         return $this->userRepository->deleteUser($id);
     }

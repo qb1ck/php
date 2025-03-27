@@ -24,7 +24,7 @@ class UserController
         echo json_encode($result);
     }
 
-    public static function delete($id): void
+    public static function delete(int $id): void
     {
         $service = new UserService();
         $result = $service->deleteUser($id);

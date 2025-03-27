@@ -23,7 +23,7 @@ class MysqlUserRepository implements UserRepositoryInterface
         return $this->connection->query('SELECT * FROM users')->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function createUser($name, $email, $password): array
+    public function createUser(string $name, string  $email, string  $password): array
     {
         $result = $this->connection->query("SELECT COUNT(*) FROM users WHERE email = '$email'");
         if ($result->fetchColumn() > 0) {
@@ -34,7 +34,7 @@ class MysqlUserRepository implements UserRepositoryInterface
         return ['success' => true];
     }
 
-    public function deleteUser($id): array
+    public function deleteUser(int $id): array
     {
         $result = $this->connection->query("SELECT COUNT(*) FROM users WHERE id = '$id'");
         if ($result->fetchColumn() == 0) {

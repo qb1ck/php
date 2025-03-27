@@ -17,7 +17,7 @@ class JsonUserRepository implements UserRepositoryInterface
         return json_decode(file_get_contents($this->filePath), true) ?? [];
     }
 
-    public function createUser($name, $email, $password): array
+    public function createUser(string $name, string  $email, string  $password): array
     {
         $users = $this->getUsers();
 
@@ -34,7 +34,7 @@ class JsonUserRepository implements UserRepositoryInterface
         return ['success' => true];
     }
 
-    public function deleteUser($id): array
+    public function deleteUser(int $id): array
     {
         $users = $this->getUsers();
         foreach ($users as $key => $user) {
