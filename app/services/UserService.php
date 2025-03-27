@@ -1,4 +1,8 @@
 <?php
+namespace App\services;
+
+use App\repositories\UserRepositoryFactory;
+use App\repositories\UserRepositoryInterface;
 
 class UserService
 {
@@ -8,27 +12,29 @@ class UserService
     {
         $dotenv = \Dotenv\Dotenv::createMutable(__DIR__ . '/../../');
         $dotenv->load();
-        if($hardSource){
+
+        if ($hardSource) {
             $_ENV['DB_SOURCE'] = $hardSource;
         }
 
         $this->userRepository = UserRepositoryFactory::getUserRepository();
     }
 
-    public function getUsers()
+    public function getUsers(): array
     {
         return $this->userRepository->getUsers();
     }
 
-
-    public function createUser($name, $email, $password)
+    public function createUser($name, $email, $password): array
     {
+        if (empty($name) || empty($email) || empty($password)) {
+            return ['error' => 'Ошибка: необходимо передать name, email и password'];
+        }
         return $this->userRepository->createUser($name, $email, $password);
     }
 
-    public function deleteUser($id)
+    public function deleteUser($id): array
     {
         return $this->userRepository->deleteUser($id);
     }
-
 }

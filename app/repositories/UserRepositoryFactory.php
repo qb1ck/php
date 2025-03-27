@@ -1,4 +1,6 @@
 <?php
+namespace App\repositories;
+use Exception;
 
 class UserRepositoryFactory
 {

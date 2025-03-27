@@ -1,5 +1,5 @@
 <?php
-
+namespace App\repositories;
 interface UserRepositoryInterface {
     public function getUsers();
     public function createUser(string $name, string $email, string $password);

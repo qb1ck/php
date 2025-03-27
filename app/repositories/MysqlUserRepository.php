@@ -1,53 +1,47 @@
 <?php
+namespace App\repositories;
+use App\databases\Database;
+
 
 class MysqlUserRepository implements UserRepositoryInterface
 {
+    private ?\PDO $connection;
+
     public function __construct()
     {
-        $connection = (new Database())->getConnection();
-        if (!count($connection->query("SHOW TABLES LIKE 'users'")->fetchAll())) {
-            $connection->query("CREATE TABLE `users` (id int primary key auto_increment, name varchar(255), email varchar(255), password varchar(255))");
-        }
+        $this->connection = (new Database())->getConnection();
+        $this->connection->query("CREATE TABLE IF NOT EXISTS `users` (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            name VARCHAR(255),
+            email VARCHAR(255) UNIQUE,
+            password VARCHAR(255)
+        )");
     }
 
-    public function getUsers(): string
+    public function getUsers(): array
     {
-        $users = (new Database)->getConnection()->query('SELECT * FROM users');
-        $returnUsers = [];
-        foreach ($users->fetchAll() as $user) {
-            [$id, $name, $email, $password] = $user;
-            $returnUsers[] = (new User($id, $name, $email, $password));
-        }
-        return json_encode($returnUsers);
+        return $this->connection->query('SELECT * FROM users')->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function createUser($name, $email, $password): void
+    public function createUser($name, $email, $password): array
     {
-        $connection = (new Database())->getConnection();
-        $result = $connection->query("SELECT COUNT(*) FROM users WHERE email = '$email'");
+        $result = $this->connection->query("SELECT COUNT(*) FROM users WHERE email = '$email'");
         if ($result->fetchColumn() > 0) {
-            echo "Ошибка: пользователь с таким email уже существует.\n";
-            return;
+            return ['error' => 'Ошибка: пользователь с таким email уже существует.'];
         }
-        $connection->query("INSERT into users (name, email, password) values ('$name', '$email', '$password')");
+
+        $this->connection->query("INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$password')");
+        return ['success' => true];
     }
 
-    public function deleteUser($id): void
+    public function deleteUser($id): array
     {
-        $connection = (new Database())->getConnection();
-        $tableExists = $connection->query("SHOW TABLES LIKE 'users'")->rowCount() > 0;
-        if (!$tableExists) {
-            echo "Таблица не существует.\n";
-            return;
-        }
-
-        $result = $connection->query("SELECT COUNT(*) FROM users WHERE id = '$id'");
+        $result = $this->connection->query("SELECT COUNT(*) FROM users WHERE id = '$id'");
         if ($result->fetchColumn() == 0) {
-            echo "Пользователь не найден.\n";
-            return;
+            return ['error' => 'Пользователь не найден.'];
         }
 
-        $connection->query("DELETE FROM users WHERE id = '$id'");
-        echo "Пользователь успешно удален.\n";
+        $this->connection->query("DELETE FROM users WHERE id = '$id'");
+        return ['success' => true];
     }
 }

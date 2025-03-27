@@ -1,12 +1,14 @@
 <?php
+namespace App\controllers;
+use App\services\UserService;
+
 class UserController
 {
     public static function index(): void
     {
         $service = new UserService();
         $users = $service->getUsers();
-
-        echo $users;
+        echo json_encode($users);
     }
 
     public static function store(): void
@@ -14,24 +16,18 @@ class UserController
         $service = new UserService();
 
         global $argv;
-        $name = $argv[2] ?? $_POST['name'];
-        $email = $argv[3] ?? $_POST['email'];
-        $password = $argv[4] ?? $_POST['password'];
+        $name = $argv[2] ?? $_POST['name'] ?? null;
+        $email = $argv[3] ?? $_POST['email'] ?? null;
+        $password = $argv[4] ?? $_POST['password'] ?? null;
 
-        if (empty($name) || empty($email) || empty($password)) {
-            echo("Ошибка: необходимо передать name, email и password\n");
-            return;
-        }
-
-        $service->createUser($name, $email, $password);
-        echo json_encode(['success' => true]);
+        $result = $service->createUser($name, $email, $password);
+        echo json_encode($result);
     }
 
     public static function delete($id): void
     {
         $service = new UserService();
-
-        $service->deleteUser($id);
-        echo json_encode(['success' => true]);
+        $result = $service->deleteUser($id);
+        echo json_encode($result);
     }
 }

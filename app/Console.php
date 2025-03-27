@@ -1,4 +1,7 @@
 <?php
+namespace App;
+use App\controllers\UserController;
+
 class Console
 {
     public function handle(array $argv): void

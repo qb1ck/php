@@ -1,10 +1,13 @@
 <?php
+namespace App\databases;
+use PDO;
+use PDOException;
 
 class Database
 {
     private $conn;
 
-    public function getConnection()
+    public function getConnection(): ?PDO
     {
         $this->conn = null;
 

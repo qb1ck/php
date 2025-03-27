@@ -1,69 +1,49 @@
 <?php
-
+namespace App\repositories;
 class JsonUserRepository implements UserRepositoryInterface
 {
-    public function getUsers(): string
+    private string $filePath;
+
+    public function __construct()
     {
-        if (!file_exists('users.json')) {
-            die("Файл не найден.\n");
-        } else {
-            return file_get_contents('users.json');
+        $this->filePath = __DIR__ . '/../../users.json';
+        if (!file_exists($this->filePath)) {
+            file_put_contents($this->filePath, json_encode([]));
         }
     }
 
-    public function createUser($name, $email, $password): void
+    public function getUsers(): array
     {
-        if (!file_exists(__DIR__ . '/../../users.json')) {
-            file_put_contents(__DIR__ . '/../../users.json', json_encode([]));
-        }
+        return json_decode(file_get_contents($this->filePath), true) ?? [];
+    }
 
-        $users = json_decode(file_get_contents(__DIR__ . '/../../users.json'), true);
+    public function createUser($name, $email, $password): array
+    {
+        $users = $this->getUsers();
+
         foreach ($users as $user) {
             if ($user['email'] == $email) {
-                echo "Ошибка: пользователь с таким email уже существует.\n";
-                return;
+                return ['error' => 'Ошибка: пользователь с таким email уже существует.'];
             }
         }
 
-        if (count($users) !== 0) {
-            $lastKey = array_key_last($users);
-            $lastUser = $users[$lastKey];
-            $id = $lastUser['id'] + 1;
-        } else {
-            $id = 1;
-        }
+        $id = empty($users) ? 1 : end($users)['id'] + 1;
+        $users[] = ['id' => $id, 'name' => $name, 'email' => $email, 'password' => $password];
 
-        $user = ['id' => $id, 'name' => $name, 'email' => $email, 'password' => $password];
-        $users[] = $user;
-        file_put_contents(__DIR__ . '/../../users.json', json_encode($users));
-        unset($user['password']);
+        file_put_contents($this->filePath, json_encode($users, JSON_PRETTY_PRINT));
+        return ['success' => true];
     }
 
-    public function deleteUser($id): void
+    public function deleteUser($id): array
     {
-
-        if (!file_exists('./users.json')) {
-            die("Файл не найден.\n");
-        }
-
-        $users = json_decode(file_get_contents('./users.json'), true);
-
-        $deleted = false;
-
+        $users = $this->getUsers();
         foreach ($users as $key => $user) {
-            if (isset($user['id']) && $user['id'] == $id) {
+            if ($user['id'] == $id) {
                 unset($users[$key]);
-                $deleted = true;
-                file_put_contents('./users.json', json_encode($users, JSON_PRETTY_PRINT));
-                break;
+                file_put_contents($this->filePath, json_encode(array_values($users), JSON_PRETTY_PRINT));
+                return ['success' => true];
             }
         }
-
-        if (!$deleted) {
-            echo "Пользователь не найден.\n";
-        } else {
-            echo "Пользователь успешно удален.\n";
-        }
+        return ['error' => 'Пользователь не найден.'];
     }
 }
-
